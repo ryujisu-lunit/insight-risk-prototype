@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INSIGHT Risk Prototype Setup</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body data-page="setup">
+  <div class="shell split-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="./2601 New Product logos_Lunit INSIGHT Risk_b.png" alt="Lunit INSIGHT Risk">
+        <p class="eyebrow">INSIGHT Risk</p>
+        <h1>Prototype Setup</h1>
+        <p class="lede">Configure the case, choose which prototypes to present, and open a clean customer-facing evaluation page.</p>
+      </div>
+
+      <section class="panel controls">
+        <div class="panel-heading">
+          <h2>Scenario Controls</h2>
+          <p>This page is for internal setup only. Customers will only see the evaluation screen.</p>
+        </div>
+
+        <div class="action-stack action-stack-top">
+          <button id="openEvaluation" class="primary-button">Go To Evaluation</button>
+          <p class="helper-copy">Complete setup here, then open the customer-facing evaluation page.</p>
+        </div>
+
+        <label class="field">
+          <span>Example Case</span>
+          <select id="scenarioSelect"></select>
+        </label>
+
+        <label class="field">
+          <span>Estimated Risk</span>
+          <div class="input-row">
+            <input id="riskInput" type="range" min="0.2" max="6.0" step="0.1" value="2.4">
+            <output id="riskOutput">2.4%</output>
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Patient Context</span>
+          <input id="patientInput" type="text" value="53F screening mammography">
+        </label>
+
+        <label class="field">
+          <span>Study Context</span>
+          <input id="studyInput" type="text" value="Bilateral screening mammogram, no suspicious interval change">
+        </label>
+
+        <label class="field">
+          <span>Prototype 2 Threshold</span>
+          <select id="prototype2Threshold">
+            <option value="1.7">1.7% cutoff</option>
+            <option value="3.0">3.0% cutoff</option>
+            <option value="both">Both thresholds</option>
+          </select>
+        </label>
+
+        <div class="thresholds">
+          <div class="threshold-pill">
+            <span>NCCN</span>
+            <strong>1.7%</strong>
+          </div>
+          <div class="threshold-pill">
+            <span>USPSTF/ASCO</span>
+            <strong>3.0%</strong>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Preview Gallery</p>
+          <h2>All prototype options</h2>
+        </div>
+        <div class="hero-note">
+          <p id="summaryText">Risk 2.4% is above NCCN 1.7% and below USPSTF/ASCO 3.0%.</p>
+        </div>
+      </section>
+
+      <section class="grid" id="previewGrid">
+        <article class="prototype-card prototype-panel" data-prototype="prototype1"></article>
+        <article class="prototype-card prototype-panel" data-prototype="prototype2"></article>
+        <article class="prototype-card prototype-panel" data-prototype="prototype3"></article>
+        <article class="prototype-card prototype-panel" data-prototype="prototype4"></article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
