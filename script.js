@@ -75,6 +75,8 @@ const defaultConfigurationSandbox = {
   study: "Bilateral screening mammogram, no suspicious interval change"
 };
 
+const prototypeDisclosure = "Lunit INSIGHT Risk provides a SEER-calibrated 5-year absolute breast cancer risk as a continuous value. Interpretation of this result and any subsequent clinical decisions should be made by the clinician in accordance with applicable guidelines (e.g., USPSTF, ASCO, NCCN).";
+
 function formatRisk(value) {
   return `${Number(value).toFixed(1)}%`;
 }
@@ -179,6 +181,10 @@ function renderCardHeader(meta, selectionControl = "") {
   `;
 }
 
+function renderDisclosure() {
+  return `<p class="disclosure-copy">${prototypeDisclosure}</p>`;
+}
+
 function renderPrototype(prototypeId, config, options = {}) {
   const { showSelection = false } = options;
   const risk = Number(config.risk);
@@ -214,6 +220,7 @@ function renderPrototype(prototypeId, config, options = {}) {
           <p class="supporting">${study}</p>
         </div>
       </div>
+      ${renderDisclosure()}
     `;
   }
 
@@ -234,6 +241,7 @@ function renderPrototype(prototypeId, config, options = {}) {
           <p class="supporting">Fixed-threshold prototype using a 3.0% reference.</p>
         </div>
       </div>
+      ${renderDisclosure()}
     `;
   }
 
@@ -269,6 +277,7 @@ function renderPrototype(prototypeId, config, options = {}) {
           <p class="supporting">Configurable cutoff prototype based on configuration page settings.</p>
         </div>
       </div>
+      ${renderDisclosure()}
     `;
   }
 
@@ -294,6 +303,7 @@ function renderPrototype(prototypeId, config, options = {}) {
     </div>
     <p class="interpretation">${dual.nccn} / ${dual.uspstf}</p>
     <p class="supporting">${study}</p>
+    ${renderDisclosure()}
   `;
 }
 
@@ -475,6 +485,7 @@ function initConfigurationPage() {
             <p class="supporting">${config.study}</p>
           </div>
         </div>
+        ${renderDisclosure()}
       `;
     } else {
       previewCard.innerHTML = renderPrototype("prototype3", previewConfig);
