@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INSIGHT Risk Configuration</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body data-page="configuration">
+  <div class="site-banner">For research / evaluation purposes only. Not for clinical use.</div>
+  <div class="shell split-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="./2601 New Product logos_Lunit INSIGHT Risk_b.png" alt="Lunit INSIGHT Risk">
+        <p class="eyebrow">INSIGHT Risk</p>
+        <h1>Configuration</h1>
+        <p class="lede">Control cutoff visibility and mode for the configurable prototype, then review the result on the right.</p>
+      </div>
+
+      <section class="panel controls">
+        <div class="panel-heading">
+          <h2>Configuration Options</h2>
+          <p>This page controls the configurable cutoff behavior used by Prototype 3.</p>
+        </div>
+
+        <div class="switch-row">
+          <div>
+            <span class="switch-title">Cutoff value setting</span>
+            <p class="switch-copy">Turn cutoff interpretation on or off.</p>
+          </div>
+          <label class="card-select" aria-label="Enable cutoff value setting">
+            <input id="cutoffEnabled" type="checkbox">
+            <span class="card-switch" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        <label class="field" id="cutoffModeField">
+          <span>Cutoff mode</span>
+          <select id="configurableCutoffMode">
+            <option value="1.7">1.7%</option>
+            <option value="3.0">3.0%</option>
+            <option value="both">Both</option>
+          </select>
+        </label>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Live Preview</p>
+          <h2>Configuration Result</h2>
+        </div>
+        <div class="hero-note">
+          <p id="configurationSummary">Cutoff setting is enabled.</p>
+        </div>
+      </section>
+
+      <section class="grid config-grid">
+        <article class="prototype-card" id="configurationPreview"></article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

@@ -38,27 +38,23 @@ const thresholds = {
 const prototypeDefinitions = {
   prototype1: {
     title: "Prototype 1",
-    subtitle: "Estimated Risk + 3.0% Binary",
-    badge: "Fixed 3.0%",
-    badgeClass: "unified"
+    subtitle: "Estimated Risk Only",
+    badge: "Estimated only"
   },
   prototype2: {
     title: "Prototype 2",
-    subtitle: "Estimated Risk + Configurable Binary",
-    badge: "Configurable",
-    badgeClass: "unified"
+    subtitle: "Estimated Risk + Fixed 3.0% Binary",
+    badge: "Fixed 3.0%"
   },
   prototype3: {
     title: "Prototype 3",
-    subtitle: "Estimated Risk + Dual Threshold",
-    badge: "Dual reference",
-    badgeClass: "unified"
+    subtitle: "Estimated Risk + Configurable Cutoff",
+    badge: "Configurable"
   },
   prototype4: {
     title: "Prototype 4",
     subtitle: "Visual Scale Card",
-    badge: "Integrated view",
-    badgeClass: "unified"
+    badge: "Integrated view"
   }
 };
 
@@ -67,8 +63,16 @@ const defaultConfig = {
   risk: 2.4,
   patient: "53F screening mammography",
   study: "Bilateral screening mammogram, no suspicious interval change",
-  prototype2Threshold: "1.7",
+  prototype3Mode: "1.7",
   selected: ["prototype1", "prototype2", "prototype3", "prototype4"]
+};
+
+const defaultConfigurationSandbox = {
+  cutoffEnabled: true,
+  cutoffMode: "1.7",
+  risk: 2.4,
+  patient: "53F screening mammography",
+  study: "Bilateral screening mammogram, no suspicious interval change"
 };
 
 function formatRisk(value) {
@@ -90,11 +94,9 @@ function binaryDescriptor(risk, threshold, label) {
 }
 
 function dualStatus(risk) {
-  const nccn = binaryLabel(risk, thresholds.nccn);
-  const uspstf = binaryLabel(risk, thresholds.uspstf);
   return {
-    nccn: `${nccn} at 1.7% NCCN`,
-    uspstf: `${uspstf} at 3.0% USPSTF/ASCO`
+    nccn: `${binaryLabel(risk, thresholds.nccn)} at 1.7% NCCN`,
+    uspstf: `${binaryLabel(risk, thresholds.uspstf)} at 3.0% USPSTF/ASCO`
   };
 }
 
@@ -134,26 +136,61 @@ function saveConfig(config) {
   localStorage.setItem("insight-risk-config", JSON.stringify(config));
 }
 
-function getPrototype2Mode(config) {
-  return String(config.prototype2Threshold);
+function loadConfigurationSandbox() {
+  try {
+    const raw = localStorage.getItem("insight-risk-configuration-sandbox");
+    if (!raw) {
+      return { ...defaultConfigurationSandbox };
+    }
+    return {
+      ...defaultConfigurationSandbox,
+      ...JSON.parse(raw)
+    };
+  } catch {
+    return { ...defaultConfigurationSandbox };
+  }
 }
 
-function getPrototype2Badge(mode) {
-  if (mode === "both") {
-    return "Both active";
-  }
-  return `${formatRisk(Number(mode))} active`;
+function saveConfigurationSandbox(config) {
+  localStorage.setItem("insight-risk-configuration-sandbox", JSON.stringify(config));
+}
+
+function getPrototype3Mode(config) {
+  return String(config.prototype3Mode || "1.7");
+}
+
+function getPrototype3Badge(config) {
+  const mode = getPrototype3Mode(config);
+  return mode === "both" ? "Both active" : `${formatRisk(Number(mode))} active`;
+}
+
+function renderCardHeader(meta, selectionControl = "") {
+  return `
+    <div class="card-header">
+      <div>
+        <p class="prototype-type">${meta.title}</p>
+        <h3>${meta.subtitle}</h3>
+      </div>
+      <div class="header-actions">
+        <span class="badge unified">${meta.badge}</span>
+        ${selectionControl}
+      </div>
+    </div>
+  `;
 }
 
 function renderPrototype(prototypeId, config, options = {}) {
-  const { showSelection = false, showEvaluationControls = false } = options;
+  const { showSelection = false } = options;
   const risk = Number(config.risk);
   const riskText = formatRisk(risk);
   const patient = config.patient;
   const study = config.study;
-  const prototype2Mode = getPrototype2Mode(config);
   const dual = dualStatus(risk);
-  const meta = prototypeDefinitions[prototypeId];
+  const meta = { ...prototypeDefinitions[prototypeId] };
+  if (prototypeId === "prototype3") {
+    meta.badge = getPrototype3Badge(config);
+  }
+
   const selected = config.selected.includes(prototypeId);
   const selectionControl = showSelection ? `
     <label class="card-select" aria-label="Include ${meta.title} in evaluation">
@@ -165,16 +202,24 @@ function renderPrototype(prototypeId, config, options = {}) {
 
   if (prototypeId === "prototype1") {
     return `
-      <div class="card-header">
-        <div>
-          <p class="prototype-type">${meta.title}</p>
-          <h3>${meta.subtitle}</h3>
+      ${renderCardHeader(meta, selectionControl)}
+      <div class="compact-layout">
+        <div class="metric-block">
+          <span class="metric-label">Estimated 5-yr risk</span>
+          <strong class="metric-value">${riskText}</strong>
         </div>
-        <div class="header-actions">
-          <span class="badge ${meta.badgeClass}">${meta.badge}</span>
-          ${selectionControl}
+        <div class="compact-copy">
+          <p class="patient-line">${patient}</p>
+          <p class="interpretation">Estimated risk only</p>
+          <p class="supporting">${study}</p>
         </div>
       </div>
+    `;
+  }
+
+  if (prototypeId === "prototype2") {
+    return `
+      ${renderCardHeader(meta, selectionControl)}
       <div class="compact-layout">
         <div class="metric-block">
           <span class="metric-label">Estimated 5-yr risk</span>
@@ -186,50 +231,32 @@ function renderPrototype(prototypeId, config, options = {}) {
         <div class="compact-copy">
           <p class="patient-line">${patient}</p>
           <p class="interpretation">${binaryDescriptor(risk, thresholds.uspstf, "USPSTF/ASCO")}</p>
-          <p class="supporting">Single-cutoff prototype using a fixed 3.0% threshold.</p>
+          <p class="supporting">Fixed-threshold prototype using a 3.0% reference.</p>
         </div>
       </div>
     `;
   }
 
-  if (prototypeId === "prototype2") {
-    const thresholdLabel = prototype2Mode === "1.7" ? "NCCN" : "USPSTF/ASCO";
-    const metricStatus = prototype2Mode === "both"
-      ? `
-          <div class="metric-status-stack">
-            <span class="metric-status">${binaryBoxLabel(risk, thresholds.nccn)}</span>
-            <span class="metric-status">${binaryBoxLabel(risk, thresholds.uspstf)}</span>
-          </div>
-        `
-      : `
-          <div class="metric-status-stack">
-            <span class="metric-status">${binaryBoxLabel(risk, Number(prototype2Mode))}</span>
+  if (prototypeId === "prototype3") {
+    const mode = getPrototype3Mode(config);
+    const metricStatus = mode === "both"
+        ? `
+            <div class="metric-status-stack">
+              <span class="metric-status">${binaryBoxLabel(risk, thresholds.nccn)}</span>
+              <span class="metric-status">${binaryBoxLabel(risk, thresholds.uspstf)}</span>
+            </div>
+          `
+        : `
+            <div class="metric-status-stack">
+            <span class="metric-status">${binaryBoxLabel(risk, Number(mode))}</span>
           </div>
         `;
-    const interpretation = prototype2Mode === "both"
-      ? `${dual.nccn} / ${dual.uspstf}`
-      : binaryDescriptor(risk, Number(prototype2Mode), thresholdLabel);
-    const thresholdControl = showEvaluationControls ? `
-      <div class="inline-control">
-        <span class="inline-control-label">Cutoff</span>
-        <div class="segmented-control" role="group" aria-label="Prototype 2 cutoff selection">
-          <button type="button" class="segmented-option ${prototype2Mode === "1.7" ? "active" : ""}" data-eval-threshold="1.7">1.7%</button>
-          <button type="button" class="segmented-option ${prototype2Mode === "3.0" ? "active" : ""}" data-eval-threshold="3.0">3.0%</button>
-          <button type="button" class="segmented-option ${prototype2Mode === "both" ? "active" : ""}" data-eval-threshold="both">Both</button>
-        </div>
-      </div>
-    ` : "";
+    const interpretation = mode === "both"
+        ? `${dual.nccn} / ${dual.uspstf}`
+        : binaryDescriptor(risk, Number(mode), mode === "1.7" ? "NCCN" : "USPSTF/ASCO");
+
     return `
-      <div class="card-header">
-        <div>
-          <p class="prototype-type">${meta.title}</p>
-          <h3>${meta.subtitle}</h3>
-        </div>
-        <div class="header-actions">
-          <span class="badge ${meta.badgeClass}">${getPrototype2Badge(prototype2Mode)}</span>
-          ${selectionControl}
-        </div>
-      </div>
+      ${renderCardHeader(meta, selectionControl)}
       <div class="compact-layout">
         <div class="metric-block">
           <span class="metric-label">Estimated 5-yr risk</span>
@@ -238,64 +265,15 @@ function renderPrototype(prototypeId, config, options = {}) {
         </div>
         <div class="compact-copy">
           <p class="patient-line">${patient}</p>
-          ${thresholdControl}
           <p class="interpretation">${interpretation}</p>
-          <p class="supporting">Threshold can be swapped in setup before sharing the evaluation page.</p>
-        </div>
-      </div>
-    `;
-  }
-
-  if (prototypeId === "prototype3") {
-    return `
-      <div class="card-header">
-        <div>
-          <p class="prototype-type">${meta.title}</p>
-          <h3>${meta.subtitle}</h3>
-        </div>
-        <div class="header-actions">
-          <span class="badge ${meta.badgeClass}">${meta.badge}</span>
-          ${selectionControl}
-        </div>
-      </div>
-      <div class="detail-grid">
-        <div class="detail-stat">
-          <span>Estimated 5-yr risk</span>
-          <strong>${riskText}</strong>
-          <div class="metric-status-stack">
-            <span class="metric-status">${binaryBoxLabel(risk, thresholds.nccn)}</span>
-            <span class="metric-status">${binaryBoxLabel(risk, thresholds.uspstf)}</span>
-          </div>
-        </div>
-        <div class="detail-copy">
-          <p class="patient-line">${patient}</p>
-          <p class="supporting">${study}</p>
-        </div>
-      </div>
-      <div class="guideline-table">
-        <div>
-          <span>NCCN</span>
-          <strong>${dual.nccn}</strong>
-        </div>
-        <div>
-          <span>USPSTF/ASCO</span>
-          <strong>${dual.uspstf}</strong>
+          <p class="supporting">Configurable cutoff prototype based on configuration page settings.</p>
         </div>
       </div>
     `;
   }
 
   return `
-    <div class="card-header">
-      <div>
-        <p class="prototype-type">${meta.title}</p>
-        <h3>${meta.subtitle}</h3>
-      </div>
-      <div class="header-actions">
-        <span class="badge ${meta.badgeClass}">${meta.badge}</span>
-        ${selectionControl}
-      </div>
-    </div>
+    ${renderCardHeader(meta, selectionControl)}
     <p class="visual-intro">A single horizontal reference scale makes threshold disagreement easy to see.</p>
     <div class="scale-wrap">
       <div class="scale-track">
@@ -319,6 +297,17 @@ function renderPrototype(prototypeId, config, options = {}) {
   `;
 }
 
+function applyScenarioToConfig(config, id) {
+  const scenario = scenarios.find((item) => item.id === id);
+  if (!scenario) {
+    return;
+  }
+  config.scenarioId = scenario.id;
+  config.risk = scenario.risk;
+  config.patient = scenario.patient;
+  config.study = scenario.study;
+}
+
 function initSetupPage() {
   const config = loadConfig();
   const scenarioSelect = document.getElementById("scenarioSelect");
@@ -326,9 +315,10 @@ function initSetupPage() {
   const riskOutput = document.getElementById("riskOutput");
   const patientInput = document.getElementById("patientInput");
   const studyInput = document.getElementById("studyInput");
+  const prototype3Mode = document.getElementById("prototype3Mode");
   const summaryText = document.getElementById("summaryText");
-  const prototype2Threshold = document.getElementById("prototype2Threshold");
   const openEvaluation = document.getElementById("openEvaluation");
+  const openConfiguration = document.getElementById("openConfiguration");
   const panels = [...document.querySelectorAll(".prototype-panel")];
 
   scenarios.forEach((scenario) => {
@@ -338,24 +328,13 @@ function initSetupPage() {
     scenarioSelect.append(option);
   });
 
-  function applyScenario(id) {
-    const scenario = scenarios.find((item) => item.id === id);
-    if (!scenario) {
-      return;
-    }
-    config.scenarioId = scenario.id;
-    config.risk = scenario.risk;
-    config.patient = scenario.patient;
-    config.study = scenario.study;
-  }
-
   function syncForm() {
     scenarioSelect.value = config.scenarioId;
     riskInput.value = config.risk;
     riskOutput.textContent = formatRisk(config.risk);
     patientInput.value = config.patient;
     studyInput.value = config.study;
-    prototype2Threshold.value = getPrototype2Mode(config);
+    prototype3Mode.value = getPrototype3Mode(config);
   }
 
   function renderPreview() {
@@ -365,6 +344,7 @@ function initSetupPage() {
       panel.classList.toggle("dimmed", !config.selected.includes(panel.dataset.prototype));
       panel.classList.toggle("selected-card", config.selected.includes(panel.dataset.prototype));
     });
+
     panels.forEach((panel) => {
       const checkbox = panel.querySelector(".prototype-checkbox");
       if (!checkbox) {
@@ -381,11 +361,12 @@ function initSetupPage() {
         renderPreview();
       });
     });
+
     saveConfig(config);
   }
 
   scenarioSelect.addEventListener("change", (event) => {
-    applyScenario(event.target.value);
+    applyScenarioToConfig(config, event.target.value);
     syncForm();
     renderPreview();
   });
@@ -406,8 +387,8 @@ function initSetupPage() {
     renderPreview();
   });
 
-  prototype2Threshold.addEventListener("change", () => {
-    config.prototype2Threshold = prototype2Threshold.value;
+  prototype3Mode.addEventListener("change", () => {
+    config.prototype3Mode = prototype3Mode.value;
     renderPreview();
   });
 
@@ -416,8 +397,13 @@ function initSetupPage() {
     window.open("./evaluation.html", "_blank");
   });
 
+  openConfiguration.addEventListener("click", () => {
+    saveConfig(config);
+    window.open("./configuration.html", "_blank");
+  });
+
   if (!scenarios.some((item) => item.id === config.scenarioId)) {
-    applyScenario(defaultConfig.scenarioId);
+    applyScenarioToConfig(config, defaultConfig.scenarioId);
   }
 
   syncForm();
@@ -439,18 +425,75 @@ function initEvaluationPage() {
   prototypeOrder.filter((prototypeId) => config.selected.includes(prototypeId)).forEach((prototypeId) => {
     const article = document.createElement("article");
     article.className = "prototype-card";
-    article.innerHTML = renderPrototype(prototypeId, config, { showEvaluationControls: prototypeId === "prototype2" });
+    article.innerHTML = renderPrototype(prototypeId, config);
     evaluationGrid.append(article);
   });
+}
 
-  evaluationGrid.querySelectorAll("[data-eval-threshold]").forEach((button) => {
-    button.addEventListener("click", () => {
-      config.prototype2Threshold = button.dataset.evalThreshold;
-      saveConfig(config);
-      evaluationGrid.innerHTML = "";
-      initEvaluationPage();
-    });
+function initConfigurationPage() {
+  const config = loadConfigurationSandbox();
+  const enableToggle = document.getElementById("cutoffEnabled");
+  const modeField = document.getElementById("cutoffModeField");
+  const modeSelect = document.getElementById("configurableCutoffMode");
+  const previewCard = document.getElementById("configurationPreview");
+  const previewSummary = document.getElementById("configurationSummary");
+
+  enableToggle.checked = Boolean(config.cutoffEnabled);
+  modeSelect.value = String(config.cutoffMode);
+
+  function renderConfigurationPreview() {
+    modeField.classList.toggle("disabled-field", !config.cutoffEnabled);
+    modeSelect.disabled = !config.cutoffEnabled;
+    previewSummary.textContent = config.cutoffEnabled
+      ? `Cutoff setting is enabled. Current mode: ${config.cutoffMode === "both" ? "Both active" : `${formatRisk(Number(config.cutoffMode))} active`}.`
+      : "Cutoff setting is disabled. The preview will show estimated risk without cutoff interpretation.";
+
+    const previewMode = config.cutoffEnabled ? config.cutoffMode : "hidden";
+    const previewConfig = {
+      scenarioId: "configuration-preview",
+      risk: config.risk,
+      patient: config.patient,
+      study: config.study,
+      prototype3Mode: previewMode === "hidden" ? "1.7" : previewMode,
+      selected: ["prototype3"]
+    };
+
+    if (!config.cutoffEnabled) {
+      previewCard.innerHTML = `
+        ${renderCardHeader({ title: "Configuration Preview", subtitle: "Estimated Risk + Optional Cutoff", badge: "Cutoff hidden" })}
+        <div class="compact-layout">
+          <div class="metric-block">
+            <span class="metric-label">Estimated 5-yr risk</span>
+            <strong class="metric-value">${formatRisk(config.risk)}</strong>
+            <div class="metric-status-stack">
+              <span class="metric-status">Cutoff hidden</span>
+            </div>
+          </div>
+          <div class="compact-copy">
+            <p class="patient-line">${config.patient}</p>
+            <p class="interpretation">Estimated risk shown without cutoff interpretation</p>
+            <p class="supporting">${config.study}</p>
+          </div>
+        </div>
+      `;
+    } else {
+      previewCard.innerHTML = renderPrototype("prototype3", previewConfig);
+    }
+
+    saveConfigurationSandbox(config);
+  }
+
+  enableToggle.addEventListener("change", () => {
+    config.cutoffEnabled = enableToggle.checked;
+    renderConfigurationPreview();
   });
+
+  modeSelect.addEventListener("change", () => {
+    config.cutoffMode = modeSelect.value;
+    renderConfigurationPreview();
+  });
+
+  renderConfigurationPreview();
 }
 
 const page = document.body.dataset.page;
@@ -459,4 +502,7 @@ if (page === "setup") {
 }
 if (page === "evaluation") {
   initEvaluationPage();
+}
+if (page === "configuration") {
+  initConfigurationPage();
 }

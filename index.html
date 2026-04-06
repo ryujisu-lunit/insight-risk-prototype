@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body data-page="setup">
+  <div class="site-banner">For research / evaluation purposes only. Not for clinical use.</div>
   <div class="shell split-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -25,7 +26,8 @@
 
         <div class="action-stack action-stack-top">
           <button id="openEvaluation" class="primary-button">Go To Evaluation</button>
-          <p class="helper-copy">Complete setup here, then open the customer-facing evaluation page.</p>
+          <button id="openConfiguration" class="secondary-button">Open Configuration</button>
+          <p class="helper-copy">Complete setup here, adjust configurable cutoff behavior if needed, then open the customer-facing evaluation page.</p>
         </div>
 
         <label class="field">
@@ -52,11 +54,11 @@
         </label>
 
         <label class="field">
-          <span>Prototype 2 Threshold</span>
-          <select id="prototype2Threshold">
-            <option value="1.7">1.7% cutoff</option>
-            <option value="3.0">3.0% cutoff</option>
-            <option value="both">Both thresholds</option>
+          <span>Prototype 3 Cutoff Mode</span>
+          <select id="prototype3Mode">
+            <option value="1.7">1.7%</option>
+            <option value="3.0">3.0%</option>
+            <option value="both">Both</option>
           </select>
         </label>
 
