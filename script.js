@@ -470,7 +470,7 @@ function initConfigurationPage() {
 
     if (!config.cutoffEnabled) {
       previewCard.innerHTML = `
-        ${renderCardHeader({ title: "Configuration Preview", subtitle: "Estimated Risk + Optional Cutoff", badge: "Cutoff hidden" })}
+        ${renderCardHeader({ title: "Configuration Preview", subtitle: "Estimated Risk + Optional Cutoff", badge: "Estimated only" })}
         <div class="compact-layout">
           <div class="metric-block">
             <span class="metric-label">Estimated 5-yr risk</span>
