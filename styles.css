@@ -278,6 +278,7 @@ output {
   display: grid;
   grid-template-columns: repeat(2, minmax(280px, 1fr));
   gap: 18px;
+  align-items: stretch;
 }
 
 .prototype-card {
@@ -286,6 +287,7 @@ output {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  height: 100%;
 }
 
 .prototype-card.dimmed {
@@ -771,6 +773,29 @@ output {
 
 .config-grid {
   grid-template-columns: minmax(320px, 720px);
+  align-items: stretch;
+}
+
+body[data-page="configuration"] .sidebar {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+body[data-page="configuration"] .controls {
+  height: 100%;
+}
+
+body[data-page="configuration"] .content {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+body[data-page="configuration"] .config-grid {
+  height: 100%;
+}
+
+body[data-page="configuration"] #configurationPreview {
+  height: 100%;
 }
 
 @media (max-width: 1120px) {
