@@ -475,9 +475,6 @@ function initConfigurationPage() {
           <div class="metric-block">
             <span class="metric-label">Estimated 5-yr risk</span>
             <strong class="metric-value">${formatRisk(config.risk)}</strong>
-            <div class="metric-status-stack">
-              <span class="metric-status">Cutoff hidden</span>
-            </div>
           </div>
           <div class="compact-copy">
             <p class="patient-line">${config.patient}</p>

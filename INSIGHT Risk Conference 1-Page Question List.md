@@ -1,14 +1,14 @@
 ---
 title: "INSIGHT Risk – Conference 1-Page Question List"
 created: '2026-04-06T11:40:00.000Z'
-modified: '2026-04-06T11:45:00.000Z'
+modified: '2026-04-06T16:10:00.000Z'
 ---
 
 # INSIGHT Risk – Conference 1-Page Question List
 
 ## Purpose
 
-A one-page question list for collecting fast and consistent feedback on INSIGHT Risk prototypes during conference interactions.
+One-page prompt sheet for fast conference conversations about the INSIGHT Risk prototypes.
 
 Recommended duration:
 
@@ -20,77 +20,54 @@ Recommended duration:
 
 - Participant role:
 - Institution type:
-- Level of experience with breast imaging / risk assessment:
+- Experience with breast imaging / risk assessment:
 
 ---
 
 ## Core Questions
 
-### 1. Use of traditional risk assessment
+### 1. Current use of traditional risk assessment
 
-- Do you currently use traditional risk assessment in your practice?
-- If yes, in what situations do you use it?
-
-Notes:
-
----
-
-### 2. Current risk models in use
-
-- If you use traditional risk assessment, which model or models do you use?
-- How do you use those models in your actual workflow?
-
-Examples:
-
-- Tyrer-Cuzick
-- Gail
-- BCSC
-- Other
+- Do you currently use traditional risk assessment?
+- If yes, which model or models do you use?
+- How do you use them in workflow?
 
 Notes:
 
 ---
 
-### 3. Expectations for image-based risk prediction
+### 2. Expectations for image-based risk prediction
 
 - What are your expectations for an image-based risk prediction model?
-- Compared with traditional models, what should it improve?
+- What should it improve compared with traditional models?
 
 Notes:
 
 ---
 
-### 4. Perception of an appropriate high-risk cutoff
+### 3. Appropriate high-risk cutoff
 
-- For an image-based risk prediction model, what do you think is an appropriate cutoff for defining high risk?
-- Do you think `1.7%`, `3.0%`, or another value is more appropriate?
-- Do you think one cutoff is enough, or should more than one threshold be shown?
-
-Notes:
-
----
-
-### 5. Best platform for reviewing the result
-
-- In which platform would it be most efficient to review this result?
-
-Examples:
-
-- PACS
-- RIS
-- EMR
-- report viewer
-- Other
-
-- Why do you think that platform would be the most effective place to show it?
+- What feels like an appropriate cutoff for defining high risk?
+- Is `1.7%`, `3.0%`, or another value more appropriate?
+- Should one threshold or multiple thresholds be shown?
 
 Notes:
 
 ---
 
-### 6. Most intuitive prototype format
+### 4. Best platform for showing the result
 
-- Which presentation format feels the most intuitive to you?
+- Where should this result appear most efficiently?
+- PACS, RIS, EMR, report viewer, or other?
+- Why?
+
+Notes:
+
+---
+
+### 5. Most intuitive prototype
+
+- Which prototype feels most intuitive?
 - Why?
 
 Compare:
@@ -104,12 +81,11 @@ Notes:
 
 ---
 
-## Additional Follow-Up Questions
+## Quick Follow-Up
 
-- Does this feel more like risk communication or more like a triage alert?
-- Would you prefer to see one threshold only, or both thresholds?
-- What would be your biggest concern if this were integrated into real workflow?
-- Is there any additional information you would want to see before using this in practice?
+- Does this feel like risk communication or a triage alert?
+- Which threshold strategy feels most appropriate?
+- What would be your biggest concern if this were deployed?
 
 Notes:
 
@@ -118,19 +94,6 @@ Notes:
 ## Quick Summary
 
 - Preferred prototype:
-- Preferred threshold approach:
-  - `1.7%`
-  - `3.0%`
-  - `Both`
-  - `Other`
+- Preferred threshold strategy:
 - Preferred platform:
 - Most important comment:
-
----
-
-## Moderator Notes
-
-- Start with open-ended questions before guiding the discussion toward threshold details
-- When asking about prototype preference, always ask why
-- Focus not only on what looks best, but on what fits best into real workflow
-- Capture the participant’s exact wording whenever they describe confusion, trust, or workflow fit

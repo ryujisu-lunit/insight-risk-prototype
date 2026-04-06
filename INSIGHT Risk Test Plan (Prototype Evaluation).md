@@ -1,206 +1,154 @@
 ---
 title: "INSIGHT Risk – Prototype Evaluation Guide"
 created: '2026-04-05T02:22:20.479Z'
-modified: '2026-04-06T11:05:00.000Z'
+modified: '2026-04-06T16:10:00.000Z'
 ---
 
 # INSIGHT Risk – Prototype Evaluation Guide
 
 ## Overview
 
-This document summarizes the current prototype evaluation approach for **INSIGHT Risk** breast cancer risk output presentation.
+This document summarizes the current evaluation approach for INSIGHT Risk prototype testing.
 
-The objective is not to decide a single threshold.  
-The objective is to evaluate how INSIGHT Risk results should be communicated inside third-party clinical systems such as EMR, RIS, or PACS environments.
-
-This is especially important because:
-
-- INSIGHT Risk itself does not provide a native UI/UX layer
-- Outputs are delivered via structured formats such as `HL7`, `JSON`, or `CSV`
-- The actual user experience will depend on how external systems choose to render those outputs
-- Current guideline references are not fully aligned
-
-The prototype environment has been implemented as a lightweight web experience with:
-
-- An internal `setup` page for scenario configuration and prototype selection
-- A customer-facing `evaluation` page for reviewing selected prototype formats only
+The goal is to evaluate how INSIGHT Risk should be communicated when rendered inside third-party systems such as EMR, RIS, or PACS environments. The goal is not to endorse a single threshold. The goal is to understand which presentation strategy is most understandable, least misleading, and most compatible with real workflow.
 
 ---
 
-## Current Guideline Context
+## Why This Evaluation Is Needed
 
-### Reference thresholds reflected in the prototype
+- INSIGHT Risk output is delivered as structured data such as `HL7`, `JSON`, or `CSV`
+- INSIGHT Risk does not currently provide its own production UI layer
+- Third-party systems will ultimately determine how the result is displayed
+- Guideline references are not fully aligned
 
-- `1.7%`: NCCN reference threshold
-- `3.0%`: USPSTF/ASCO reference threshold
+Current reference points used in the prototype:
 
-### Interpretation principle
-
-The discrepancy between thresholds should be made visible rather than hidden.
-
-Example:
-
-- `Estimated 5-yr risk: 2.4%`
-- `Increased at 1.7% NCCN`
-- `Non-increased at 3.0% USPSTF/ASCO`
-
-This is especially relevant because NCCN has incorporated image-based risk assessment context, while other frameworks may still rely on traditional risk model conventions.
-
----
-
-## Key Evaluation Questions
-
-- Do users understand the result quickly and correctly?
-- Does the result feel like a `risk communication tool` rather than a `triage alert`?
-- Is a single threshold easier to understand, or does it create oversimplification?
-- Is showing both thresholds more transparent, or more confusing?
-- Which format is most realistic for embedding into Epic, RIS, PACS, or similar environments?
+- `1.7%`: NCCN
+- `3.0%`: USPSTF/ASCO
 
 ---
 
 ## Regulatory and Messaging Principles
 
-- Avoid direct management recommendations
-- Avoid language that implies automatic downstream action
-- Prefer neutral phrasing such as:
+- Do not imply clinical recommendation or management direction
+- Use neutral language such as:
+  - `Estimated 5-yr risk`
   - `Increased`
   - `Non-increased`
   - `Reference threshold`
-  - `Estimated 5-yr risk`
-- Keep threshold logic visible when relevant
-- Treat the prototype as a communication study, not a clinical recommendation engine
+- Keep the exercise focused on communication strategy
+- Make threshold logic visible when needed, but avoid overstating certainty
+
+All prototype pages include this banner:
+
+`For research / evaluation purposes only. Not for clinical use.`
+
+All prototype cards include this disclosure:
+
+`Lunit INSIGHT Risk provides a SEER-calibrated 5-year absolute breast cancer risk as a continuous value. Interpretation of this result and any subsequent clinical decisions should be made by the clinician in accordance with applicable guidelines (e.g., USPSTF, ASCO, NCCN).`
 
 ---
 
-## Implemented Prototype Structure
+## Live Environment
 
-## 1. Internal Setup Page
-
-Purpose:
-
-- Configure sample cases
-- Adjust risk values
-- Select which prototypes will be shown to customers
-- Configure Prototype 2 default threshold mode before evaluation
-
-Current entry URL:
+### Setup page
 
 - `https://insight-risk-prototype.vercel.app/`
 
-Main controls:
-
-- Example case selection
-- Estimated risk slider
-- Patient context
-- Study context
-- Prototype 2 mode
-  - `1.7% cutoff`
-  - `3.0% cutoff`
-  - `Both thresholds`
-- Per-prototype inclusion toggle
-- `Go To Evaluation` button
-
----
-
-## 2. Customer-Facing Evaluation Page
-
 Purpose:
 
-- Hide internal setup controls
-- Show only selected prototypes
-- Allow focused qualitative review by clinicians or customers
+- internal setup only
+- choose scenario
+- edit patient and study context
+- choose which prototypes appear in evaluation
+- set Prototype 3 mode for the main prototype flow
+- open evaluation page
+- open configuration sandbox
 
-Evaluation URL:
+### Evaluation page
 
 - `https://insight-risk-prototype.vercel.app/evaluation.html`
 
-Current behavior:
+Purpose:
 
-- Prototypes appear in fixed order:
+- customer-facing review page
+- shows only selected prototypes
+- fixed display order:
   - top-left: Prototype 1
   - top-right: Prototype 2
   - bottom-left: Prototype 3
   - bottom-right: Prototype 4
-- Only prototypes selected on the setup page are shown
-- Prototype 2 supports in-page cutoff switching during evaluation
+
+### Configuration sandbox
+
+- `https://insight-risk-prototype.vercel.app/configuration.html`
+
+Purpose:
+
+- independent experimental page
+- does not change the main setup/evaluation prototype state
+- used only to explore cutoff display options in isolation
 
 ---
 
-## Implemented Prototype Set
+## Current Prototype Set
 
 ## Prototype 1
 
-**Estimated 5-yr risk + fixed 3.0% binary interpretation**
+**Estimated 5-year risk only**
 
 Characteristics:
 
-- Displays estimated 5-year risk
-- Uses a fixed `3.0%` threshold
-- Status box includes:
-  - `Increased (>=3.0%)` or
-  - `Non-increased (<3.0%)`
-- Intended to evaluate a simple, single-threshold communication pattern
+- numeric risk only
+- no cutoff display
+- no increased/non-increased classification
 
-Strengths:
+Evaluation use:
 
-- Easy to explain
-- Likely easy to implement in external systems
-
-Risks:
-
-- May hide NCCN-related interpretation nuance
-- May oversimplify borderline cases
+- tests whether a pure continuous value is sufficient
+- helps identify whether users require interpretation support
 
 ---
 
 ## Prototype 2
 
-**Estimated 5-yr risk + configurable threshold logic**
+**Estimated 5-year risk + fixed 3.0% increased/non-increased**
 
 Characteristics:
 
-- Displays estimated 5-year risk
-- Allows evaluation with:
-  - `1.7%`
-  - `3.0%`
-  - `Both`
-- In the customer-facing evaluation page, the cutoff mode can be changed directly inside the card
+- numeric risk
+- fixed `3.0%` threshold
+- binary interpretation only
 
-Use case:
+Evaluation use:
 
-- Useful for testing whether users want one configurable operational mode
-- Useful for comparing how interpretation changes when the same numeric risk is anchored to different thresholds
-
-Key evaluation question:
-
-- Do users prefer configurability, or does it make the result feel unstable?
+- tests a simple operational format
+- useful for understanding whether a single fixed threshold is preferred
 
 ---
 
 ## Prototype 3
 
-**Estimated 5-yr risk + dual reference display**
+**Estimated 5-year risk + configurable cutoff-based increased/non-increased**
 
 Characteristics:
 
-- Displays estimated 5-year risk
-- Shows both:
-  - `1.7% NCCN`
-  - `3.0% USPSTF/ASCO`
-- Status box explicitly includes both interpretations
+- numeric risk
+- configurable interpretation mode
+- supports:
+  - `1.7%`
+  - `3.0%`
+  - `Both`
 
-Example:
+Main flow behavior:
 
-- `Increased (>=1.7%)`
-- `Non-increased (<3.0%)`
+- controlled from the setup page
+- shown in evaluation according to the selected setup mode
 
-Use case:
+Evaluation use:
 
-- Best for evaluating transparency when guideline references diverge
-
-Key evaluation question:
-
-- Does dual display improve trust and understanding, or create cognitive burden?
+- tests whether configurable interpretation adds value or confusion
+- tests whether participants prefer one threshold or dual-threshold visibility
 
 ---
 
@@ -210,156 +158,89 @@ Key evaluation question:
 
 Characteristics:
 
-- Displays estimated 5-year risk on a horizontal scale
-- Shows both threshold markers:
+- numeric risk
+- horizontal visual scale
+- includes `1.7%` and `3.0%` reference markers
+- includes text interpretation below the scale
+
+Evaluation use:
+
+- tests whether a visual format improves understanding of borderline cases
+- useful for measuring intuitive comprehension
+
+---
+
+## Independent Configuration Sandbox
+
+The configuration page is intentionally separate from the main prototype flow.
+
+Purpose:
+
+- explore cutoff display logic independently
+- avoid affecting the actual customer-facing prototype set
+
+Configuration options:
+
+- cutoff value setting: on/off
+- if enabled:
   - `1.7%`
   - `3.0%`
-- Uses a visual position marker for the estimated risk value
-- Includes text interpretation beneath the scale
+  - `Both`
 
-Use case:
+Preview behavior:
 
-- Best for evaluating intuitive understanding of borderline or discordant cases
-
-Key evaluation question:
-
-- Is a visual spectrum easier to understand than text-only threshold interpretation?
+- the result is shown immediately in the preview panel
+- changes do not modify the main setup/evaluation state
 
 ---
 
 ## Recommended Test Cases
 
-The following scenarios are already configured in the prototype and should be used during review:
+Current scenarios:
 
 - `1.6%`: below both thresholds
 - `1.8%`: above NCCN, below USPSTF/ASCO
-- `2.4%`: representative discordant case
+- `2.4%`: discordant case
 - `3.1%`: above both thresholds
 
-These cases are important because they test:
+Recommended primary discussion case:
 
-- below-threshold clarity
-- near-threshold confusion
-- dual-threshold discordance
-- fully above-threshold interpretation
+- `2.4%`
 
----
+Why:
 
-## Example HL7 to UI Mapping
-
-Example HL7:
-
-```hl7
-OBX|1|NM|RISK_SCORE||2.4|%|
-OBX|2|NM|THRESHOLD_NCCN||1.7|%|
-OBX|3|NM|THRESHOLD_USPSTF||3.0|%|
-```
-
-UI translation examples:
-
-- `Estimated 5-yr risk: 2.4%`
-- `Increased (>=1.7%)`
-- `Non-increased (<3.0%)`
-
-This reinforces that the presentation layer should remain separable from the transport format.
+- easiest case for observing reactions to threshold disagreement
 
 ---
 
-## Suggested Evaluation Flow
+## Suggested Evaluation Questions
 
-### Internal setup
-
-1. Open the setup page
-2. Choose the patient scenario
-3. Select the prototypes to show
-4. If needed, set Prototype 2 default mode
-5. Click `Go To Evaluation`
-
-### Customer interview flow
-
-1. Briefly explain that this is a prototype of how INSIGHT Risk output may appear inside third-party systems
-2. Show the selected prototypes
-3. Ask the participant to compare them
-4. Capture immediate preference and confusion points
-5. If useful, change scenario or Prototype 2 mode and observe reaction
-
-Recommended interaction time:
-
-- `1–3 minutes` per participant
-
----
-
-## Suggested Survey Questions
-
-### Understanding
-
-- How easy was this result to understand?
-
-### Interpretation confidence
-
-- Did the result feel clinically interpretable without over-directing action?
-
-### Format preference
-
-- Which format would you prefer to see inside your workflow?
-
-### Threshold clarity
-
-- Was the threshold logic clear?
-- Was it confusing to see more than one threshold?
-
-### Workflow fit
-
-- Which format would fit best inside Epic, RIS, or PACS?
-
-### Open comment
-
-- What would you change before using this in practice?
+- Which format is easiest to understand at first glance?
+- Which format would fit best into your workflow?
+- Does this feel like risk communication or like a triage alert?
+- Do you prefer no threshold, a fixed threshold, or configurable threshold logic?
+- Is the visual scale more helpful than text-only interpretation?
 
 ---
 
 ## Success Metrics
 
-- Preference rate by prototype
-- Average understanding score
-- Perceived confusion level
-- Frequency of comments suggesting triage misinterpretation
-- Preference for single-threshold vs dual-threshold logic
-- Feedback on fit within existing clinical UI environments
-
----
-
-## Deployment Status
-
-The prototype is now deployed and accessible online.
-
-### Production URL
-
-- `https://insight-risk-prototype.vercel.app/`
-
-### Notes
-
-- The site is currently a static front-end deployment
-- The setup page uses browser-local state for selected configurations
-- The evaluation page is intended for customer-facing demonstration
-- If shared-state links are needed later, URL-based configuration can be added
+- preferred prototype by participant type
+- perceived clarity
+- confusion related to threshold logic
+- perceived workflow fit
+- comments suggesting over-interpretation risk
+- preference for continuous vs binary vs configurable display
 
 ---
 
 ## Strategic Takeaway
 
-This prototype effort should be treated as an evaluation of communication strategy, not threshold endorsement.
+This evaluation is about communication design, not threshold endorsement.
 
 The main questions are:
 
-- How should image-based risk be represented?
-- When should threshold logic be shown?
-- Should single or dual-threshold interpretation be visible?
-- What format minimizes confusion while preserving transparency?
-
-The current prototype suite is therefore appropriate for:
-
-- conference booth feedback
-- customer interviews
-- clinical advisory board discussion
-- UI integration discussion with third-party platform partners
+- when should cutoff logic be shown?
+- should one threshold or multiple thresholds be visible?
+- does configurability help or create confusion?
+- what format best fits real-world system integration?
