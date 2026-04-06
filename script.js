@@ -75,6 +75,22 @@ const defaultConfigurationSandbox = {
   study: "Bilateral screening mammogram, no suspicious interval change"
 };
 
+const defaultInterviewNotes = {
+  modeEnabled: false,
+  interviewId: "",
+  participantRole: "",
+  institutionType: "",
+  preferredPrototype: "",
+  preferredReason: "",
+  leastPreferredPrototype: "",
+  leastPreferredReason: "",
+  thresholdPreference: "",
+  preferredPlatform: "",
+  positioningPreference: "",
+  keyQuote: "",
+  additionalNotes: ""
+};
+
 const prototypeDisclosure = "Lunit INSIGHT Risk provides a SEER-calibrated 5-year absolute breast cancer risk as a continuous value. Interpretation of this result and any subsequent clinical decisions should be made by the clinician in accordance with applicable guidelines (e.g., USPSTF, ASCO, NCCN).";
 
 function formatRisk(value) {
@@ -155,6 +171,29 @@ function loadConfigurationSandbox() {
 
 function saveConfigurationSandbox(config) {
   localStorage.setItem("insight-risk-configuration-sandbox", JSON.stringify(config));
+}
+
+function loadInterviewNotes() {
+  try {
+    const raw = localStorage.getItem("insight-risk-interview-notes");
+    if (!raw) {
+      return { ...defaultInterviewNotes };
+    }
+    return {
+      ...defaultInterviewNotes,
+      ...JSON.parse(raw)
+    };
+  } catch {
+    return { ...defaultInterviewNotes };
+  }
+}
+
+function saveInterviewNotes(notes) {
+  localStorage.setItem("insight-risk-interview-notes", JSON.stringify(notes));
+}
+
+function buildInterviewId() {
+  return `INT-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
 }
 
 function getPrototype3Mode(config) {
@@ -422,11 +461,31 @@ function initSetupPage() {
 
 function initEvaluationPage() {
   const config = loadConfig();
+  const notes = loadInterviewNotes();
   const summaryText = document.getElementById("summaryText");
   const metaPatient = document.getElementById("metaPatient");
   const metaStudy = document.getElementById("metaStudy");
   const evaluationGrid = document.getElementById("evaluationGrid");
+  const interviewModeToggle = document.getElementById("interviewModeToggle");
+  const interviewPanel = document.getElementById("interviewPanel");
+  const interviewLayout = document.getElementById("interviewLayout");
+  const exportInterview = document.getElementById("exportInterview");
+  const clearInterview = document.getElementById("clearInterview");
   const prototypeOrder = ["prototype1", "prototype2", "prototype3", "prototype4"];
+  const noteFields = {
+    interviewId: document.getElementById("interviewId"),
+    participantRole: document.getElementById("participantRole"),
+    institutionType: document.getElementById("institutionType"),
+    preferredPrototype: document.getElementById("preferredPrototype"),
+    preferredReason: document.getElementById("preferredReason"),
+    leastPreferredPrototype: document.getElementById("leastPreferredPrototype"),
+    leastPreferredReason: document.getElementById("leastPreferredReason"),
+    thresholdPreference: document.getElementById("thresholdPreference"),
+    preferredPlatform: document.getElementById("preferredPlatform"),
+    positioningPreference: document.getElementById("positioningPreference"),
+    keyQuote: document.getElementById("keyQuote"),
+    additionalNotes: document.getElementById("additionalNotes")
+  };
 
   summaryText.textContent = buildSummary(Number(config.risk));
   metaPatient.textContent = config.patient;
@@ -438,6 +497,75 @@ function initEvaluationPage() {
     article.innerHTML = renderPrototype(prototypeId, config);
     evaluationGrid.append(article);
   });
+
+  if (!notes.interviewId) {
+    notes.interviewId = buildInterviewId();
+  }
+
+  function syncInterviewFields() {
+    interviewModeToggle.checked = Boolean(notes.modeEnabled);
+    interviewPanel.classList.toggle("hidden", !notes.modeEnabled);
+    interviewLayout.classList.toggle("interview-mode-active", !!notes.modeEnabled);
+
+    Object.entries(noteFields).forEach(([key, field]) => {
+      field.value = notes[key] || "";
+    });
+  }
+
+  function persistInterviewFields() {
+    Object.entries(noteFields).forEach(([key, field]) => {
+      notes[key] = field.value;
+    });
+    saveInterviewNotes(notes);
+  }
+
+  interviewModeToggle.addEventListener("change", () => {
+    notes.modeEnabled = interviewModeToggle.checked;
+    saveInterviewNotes(notes);
+    syncInterviewFields();
+  });
+
+  Object.values(noteFields).forEach((field) => {
+    field.addEventListener("input", persistInterviewFields);
+    field.addEventListener("change", persistInterviewFields);
+  });
+
+  exportInterview.addEventListener("click", () => {
+    persistInterviewFields();
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      scenario: {
+        patient: config.patient,
+        study: config.study,
+        risk: config.risk,
+        prototype3Mode: config.prototype3Mode,
+        selectedPrototypes: config.selected
+      },
+      notes
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${notes.interviewId || "insight-risk-interview"}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+
+  clearInterview.addEventListener("click", () => {
+    const freshNotes = {
+      ...defaultInterviewNotes,
+      modeEnabled: notes.modeEnabled,
+      interviewId: buildInterviewId()
+    };
+    Object.keys(notes).forEach((key) => {
+      notes[key] = freshNotes[key];
+    });
+    saveInterviewNotes(notes);
+    syncInterviewFields();
+  });
+
+  syncInterviewFields();
 }
 
 function initConfigurationPage() {

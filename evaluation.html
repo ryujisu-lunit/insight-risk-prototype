@@ -22,11 +22,127 @@
     </header>
 
     <section class="evaluation-meta panel">
-      <p class="meta-line"><strong id="metaPatient">53F screening mammography</strong></p>
-      <p class="meta-line" id="metaStudy">Bilateral screening mammogram, no suspicious interval change</p>
+      <div class="evaluation-meta-copy">
+        <p class="meta-line"><strong id="metaPatient">53F screening mammography</strong></p>
+        <p class="meta-line" id="metaStudy">Bilateral screening mammogram, no suspicious interval change</p>
+      </div>
+      <div class="evaluation-meta-actions">
+        <label class="card-select interview-toggle" aria-label="Enable interviewer mode">
+          <input id="interviewModeToggle" type="checkbox">
+          <span class="card-switch" aria-hidden="true"></span>
+          <span class="card-select-label">Interviewer mode</span>
+        </label>
+      </div>
     </section>
 
-    <main class="grid evaluation-grid" id="evaluationGrid"></main>
+    <section class="interview-layout" id="interviewLayout">
+      <main class="grid evaluation-grid" id="evaluationGrid"></main>
+
+      <aside class="panel interview-panel hidden" id="interviewPanel">
+        <div class="panel-heading">
+          <h2>Interview Notes</h2>
+          <p>Visible only in interviewer mode. Notes are stored locally in this browser.</p>
+        </div>
+
+        <div class="interview-actions">
+          <button type="button" class="secondary-button compact-button" id="exportInterview">Export JSON</button>
+          <button type="button" class="secondary-button compact-button" id="clearInterview">Clear</button>
+        </div>
+
+        <form class="interview-form" id="interviewForm">
+          <label class="field">
+            <span>Interview ID</span>
+            <input id="interviewId" type="text">
+          </label>
+
+          <label class="field">
+            <span>Participant Role</span>
+            <input id="participantRole" type="text" placeholder="Radiologist, clinician, admin...">
+          </label>
+
+          <label class="field">
+            <span>Institution Type</span>
+            <input id="institutionType" type="text" placeholder="Academic center, community hospital...">
+          </label>
+
+          <label class="field">
+            <span>Preferred Prototype</span>
+            <select id="preferredPrototype">
+              <option value="">Select</option>
+              <option value="prototype1">Prototype 1</option>
+              <option value="prototype2">Prototype 2</option>
+              <option value="prototype3">Prototype 3</option>
+              <option value="prototype4">Prototype 4</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Why Preferred</span>
+            <textarea id="preferredReason" rows="3" placeholder="Most intuitive because..."></textarea>
+          </label>
+
+          <label class="field">
+            <span>Least Preferred Prototype</span>
+            <select id="leastPreferredPrototype">
+              <option value="">Select</option>
+              <option value="prototype1">Prototype 1</option>
+              <option value="prototype2">Prototype 2</option>
+              <option value="prototype3">Prototype 3</option>
+              <option value="prototype4">Prototype 4</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Why Least Preferred</span>
+            <textarea id="leastPreferredReason" rows="3" placeholder="Too complex, too little context..."></textarea>
+          </label>
+
+          <label class="field">
+            <span>Preferred Threshold Strategy</span>
+            <select id="thresholdPreference">
+              <option value="">Select</option>
+              <option value="none">No threshold</option>
+              <option value="1.7">1.7%</option>
+              <option value="3.0">3.0%</option>
+              <option value="both">Both</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Preferred Platform</span>
+            <select id="preferredPlatform">
+              <option value="">Select</option>
+              <option value="pacs">PACS</option>
+              <option value="ris">RIS</option>
+              <option value="emr">EMR</option>
+              <option value="report-viewer">Report viewer</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Feels Like</span>
+            <select id="positioningPreference">
+              <option value="">Select</option>
+              <option value="risk-communication">Risk communication</option>
+              <option value="triage-alert">Triage alert</option>
+              <option value="mixed">Mixed / unclear</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Key Quote</span>
+            <textarea id="keyQuote" rows="3" placeholder="Capture exact wording when possible"></textarea>
+          </label>
+
+          <label class="field">
+            <span>Additional Notes</span>
+            <textarea id="additionalNotes" rows="5" placeholder="Workflow fit, confusion points, requests..."></textarea>
+          </label>
+        </form>
+      </aside>
+    </section>
   </div>
 
   <script src="./script.js"></script>

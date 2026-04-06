@@ -204,6 +204,10 @@ output {
   line-height: 1.5;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .action-stack {
   margin-top: 18px;
 }
@@ -771,6 +775,63 @@ output {
   grid-template-columns: repeat(2, minmax(320px, 1fr));
 }
 
+.evaluation-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.evaluation-meta-copy {
+  min-width: 0;
+}
+
+.evaluation-meta-actions {
+  flex-shrink: 0;
+}
+
+.interview-layout {
+  display: block;
+}
+
+.interview-layout.interview-mode-active {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 18px;
+  align-items: start;
+}
+
+.interview-panel {
+  position: sticky;
+  top: 72px;
+}
+
+.interview-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.compact-button {
+  padding: 10px 12px;
+}
+
+.interview-form {
+  display: grid;
+  gap: 2px;
+}
+
+.field textarea {
+  width: 100%;
+  resize: vertical;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--text);
+  background: var(--paper-strong);
+  min-height: 88px;
+}
+
 .config-grid {
   grid-template-columns: minmax(320px, 720px);
   align-items: stretch;
@@ -810,6 +871,10 @@ body[data-page="configuration"] #configurationPreview {
   .evaluation-grid {
     grid-template-columns: 1fr;
   }
+
+  .interview-layout.interview-mode-active {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -825,6 +890,11 @@ body[data-page="configuration"] #configurationPreview {
 
   .hero h2 {
     font-size: 28px;
+  }
+
+  .evaluation-meta {
+    flex-direction: column;
+    align-items: start;
   }
 
   .compact-layout,
