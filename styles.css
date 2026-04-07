@@ -333,6 +333,12 @@ output {
   font-size: 24px;
 }
 
+.prototype-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;

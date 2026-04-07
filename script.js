@@ -38,22 +38,22 @@ const thresholds = {
 const prototypeDefinitions = {
   prototype1: {
     title: "Prototype 1",
-    subtitle: "Estimated Risk Only",
+    subtitle: "Risk Score Only",
     badge: "Estimated only"
   },
   prototype2: {
     title: "Prototype 2",
-    subtitle: "Estimated Risk + Fixed 3.0% Binary",
+    subtitle: "Risk Score + Fixed Risk Category",
     badge: "Fixed 3.0%"
   },
   prototype3: {
     title: "Prototype 3",
-    subtitle: "Estimated Risk + Configurable Cutoff",
+    subtitle: "Risk Score + Configurable Risk Category",
     badge: "Configurable"
   },
   prototype4: {
     title: "Prototype 4",
-    subtitle: "Visual Scale Card",
+    subtitle: "Visual Risk Scorecard",
     badge: "Integrated view"
   }
 };
@@ -224,6 +224,22 @@ function renderDisclosure() {
   return `<p class="disclosure-copy">${prototypeDisclosure}</p>`;
 }
 
+function renderPrototypeDescription(prototypeId) {
+  if (prototypeId === "prototype1") {
+    return `<p class="prototype-description">This format presents the SEER-calibrated 5-year absolute breast cancer risk as a continuous percentage only, without adding a cutoff-based category or interpretation layer.</p>`;
+  }
+
+  if (prototypeId === "prototype2") {
+    return `<p class="prototype-description">This format presents the continuous risk score together with a binary increased or non-increased category using a fixed 3.0% cutoff, aligned with the increased-risk threshold commonly referenced in ASCO and USPSTF guidance.</p>`;
+  }
+
+  if (prototypeId === "prototype3") {
+    return `<p class="prototype-description">This format presents the continuous risk score together with a configurable binary category, allowing the user to view interpretation based on 1.7% (NCCN), 3.0% (ASCO/USPSTF), or both thresholds depending on their usual guideline context.</p>`;
+  }
+
+  return `<p class="prototype-description">This visual concept presents the image-based risk score on a bar-style scale so users can more intuitively understand where the score sits relative to high-risk cutoff values described in existing guidelines.</p>`;
+}
+
 function renderPrototype(prototypeId, config, options = {}) {
   const { showSelection = false } = options;
   const risk = Number(config.risk);
@@ -248,6 +264,7 @@ function renderPrototype(prototypeId, config, options = {}) {
   if (prototypeId === "prototype1") {
     return `
       ${renderCardHeader(meta, selectionControl)}
+      ${renderPrototypeDescription(prototypeId)}
       <div class="compact-layout">
         <div class="metric-block">
           <span class="metric-label">Estimated 5-yr risk</span>
@@ -266,6 +283,7 @@ function renderPrototype(prototypeId, config, options = {}) {
   if (prototypeId === "prototype2") {
     return `
       ${renderCardHeader(meta, selectionControl)}
+      ${renderPrototypeDescription(prototypeId)}
       <div class="compact-layout">
         <div class="metric-block">
           <span class="metric-label">Estimated 5-yr risk</span>
@@ -304,6 +322,7 @@ function renderPrototype(prototypeId, config, options = {}) {
 
     return `
       ${renderCardHeader(meta, selectionControl)}
+      ${renderPrototypeDescription(prototypeId)}
       <div class="compact-layout">
         <div class="metric-block">
           <span class="metric-label">Estimated 5-yr risk</span>
@@ -322,6 +341,7 @@ function renderPrototype(prototypeId, config, options = {}) {
 
   return `
     ${renderCardHeader(meta, selectionControl)}
+    ${renderPrototypeDescription(prototypeId)}
     <p class="visual-intro">A single horizontal reference scale makes threshold disagreement easy to see.</p>
     <div class="scale-wrap">
       <div class="scale-track">
