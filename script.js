@@ -244,8 +244,6 @@ function renderPrototype(prototypeId, config, options = {}) {
   const { showSelection = false } = options;
   const risk = Number(config.risk);
   const riskText = formatRisk(risk);
-  const patient = config.patient;
-  const study = config.study;
   const dual = dualStatus(risk);
   const meta = { ...prototypeDefinitions[prototypeId] };
   if (prototypeId === "prototype3") {
@@ -271,9 +269,8 @@ function renderPrototype(prototypeId, config, options = {}) {
           <strong class="metric-value">${riskText}</strong>
         </div>
         <div class="compact-copy">
-          <p class="patient-line">${patient}</p>
           <p class="interpretation">Estimated risk only</p>
-          <p class="supporting">${study}</p>
+          <p class="supporting">This format presents only the continuous 5-year absolute risk value.</p>
         </div>
       </div>
       ${renderDisclosure()}
@@ -293,7 +290,6 @@ function renderPrototype(prototypeId, config, options = {}) {
           </div>
         </div>
         <div class="compact-copy">
-          <p class="patient-line">${patient}</p>
           <p class="interpretation">${binaryDescriptor(risk, thresholds.uspstf, "USPSTF/ASCO")}</p>
           <p class="supporting">Fixed-threshold prototype using a 3.0% reference.</p>
         </div>
@@ -330,7 +326,6 @@ function renderPrototype(prototypeId, config, options = {}) {
           ${metricStatus}
         </div>
         <div class="compact-copy">
-          <p class="patient-line">${patient}</p>
           <p class="interpretation">${interpretation}</p>
           <p class="supporting">Configurable cutoff prototype based on configuration page settings.</p>
         </div>
@@ -361,7 +356,7 @@ function renderPrototype(prototypeId, config, options = {}) {
       </div>
     </div>
     <p class="interpretation">${dual.nccn} / ${dual.uspstf}</p>
-    <p class="supporting">${study}</p>
+    <p class="supporting">This concept uses a visual scale to show where the score falls relative to reference thresholds.</p>
     ${renderDisclosure()}
   `;
 }
@@ -386,6 +381,8 @@ function initSetupPage() {
   const studyInput = document.getElementById("studyInput");
   const prototype3Mode = document.getElementById("prototype3Mode");
   const summaryText = document.getElementById("summaryText");
+  const setupPatient = document.getElementById("setupPatient");
+  const setupStudy = document.getElementById("setupStudy");
   const openEvaluation = document.getElementById("openEvaluation");
   const openConfiguration = document.getElementById("openConfiguration");
   const panels = [...document.querySelectorAll(".prototype-panel")];
@@ -408,6 +405,8 @@ function initSetupPage() {
 
   function renderPreview() {
     summaryText.textContent = buildSummary(Number(config.risk));
+    setupPatient.textContent = config.patient;
+    setupStudy.textContent = config.study;
     panels.forEach((panel) => {
       panel.innerHTML = renderPrototype(panel.dataset.prototype, config, { showSelection: true });
       panel.classList.toggle("dimmed", !config.selected.includes(panel.dataset.prototype));
@@ -625,9 +624,8 @@ function initConfigurationPage() {
             <strong class="metric-value">${formatRisk(config.risk)}</strong>
           </div>
           <div class="compact-copy">
-            <p class="patient-line">${config.patient}</p>
             <p class="interpretation">Estimated risk shown without cutoff interpretation</p>
-            <p class="supporting">${config.study}</p>
+            <p class="supporting">This preview shows only the continuous 5-year absolute risk value.</p>
           </div>
         </div>
         ${renderDisclosure()}
