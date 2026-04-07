@@ -39,17 +39,17 @@ const prototypeDefinitions = {
   prototype1: {
     title: "Prototype 1",
     subtitle: "Risk Score Only",
-    badge: "Estimated only"
+    badge: "Score only"
   },
   prototype2: {
     title: "Prototype 2",
     subtitle: "Risk Score + Fixed Risk Category",
-    badge: "Fixed 3.0%"
+    badge: "Score+Category(3% cut-off)"
   },
   prototype3: {
     title: "Prototype 3",
     subtitle: "Risk Score + Configurable Risk Category",
-    badge: "Configurable"
+    badge: "Score+Category(Configurable)"
   },
   prototype4: {
     title: "Prototype 4",
@@ -201,8 +201,7 @@ function getPrototype3Mode(config) {
 }
 
 function getPrototype3Badge(config) {
-  const mode = getPrototype3Mode(config);
-  return mode === "both" ? "Both active" : `${formatRisk(Number(mode))} active`;
+  return prototypeDefinitions.prototype3.badge;
 }
 
 function renderCardHeader(meta, selectionControl = "") {
@@ -617,7 +616,7 @@ function initConfigurationPage() {
 
     if (!config.cutoffEnabled) {
       previewCard.innerHTML = `
-        ${renderCardHeader({ title: "Configuration Preview", subtitle: "Estimated Risk + Optional Cutoff", badge: "Estimated only" })}
+        ${renderCardHeader({ title: "Configuration Preview", subtitle: "Estimated Risk + Optional Cutoff", badge: "Score only" })}
         <div class="compact-layout">
           <div class="metric-block">
             <span class="metric-label">Estimated 5-yr risk</span>
