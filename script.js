@@ -79,6 +79,7 @@ const defaultInterviewNotes = {
   modeEnabled: false,
   interviewId: "",
   participantRole: "",
+  participantName: "",
   institutionType: "",
   preferredPrototype: "",
   preferredReason: "",
@@ -86,6 +87,7 @@ const defaultInterviewNotes = {
   leastPreferredReason: "",
   thresholdPreference: "",
   preferredPlatform: "",
+  mainMotivation: "",
   positioningPreference: "",
   keyQuote: "",
   additionalNotes: ""
@@ -493,6 +495,7 @@ function initEvaluationPage() {
   const noteFields = {
     interviewId: document.getElementById("interviewId"),
     participantRole: document.getElementById("participantRole"),
+    participantName: document.getElementById("participantName"),
     institutionType: document.getElementById("institutionType"),
     preferredPrototype: document.getElementById("preferredPrototype"),
     preferredReason: document.getElementById("preferredReason"),
@@ -500,6 +503,7 @@ function initEvaluationPage() {
     leastPreferredReason: document.getElementById("leastPreferredReason"),
     thresholdPreference: document.getElementById("thresholdPreference"),
     preferredPlatform: document.getElementById("preferredPlatform"),
+    mainMotivation: document.getElementById("mainMotivation"),
     positioningPreference: document.getElementById("positioningPreference"),
     keyQuote: document.getElementById("keyQuote"),
     additionalNotes: document.getElementById("additionalNotes")
